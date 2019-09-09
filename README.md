@@ -1,6 +1,7 @@
 # Transfer Money
 ## RESTful API for money transfers between accounts.
 [![Build Status](https://travis-ci.com/ArtemVChukin/tmoney.svg?branch=master)](https://travis-ci.com/ArtemVChukin/tmoney)
+
 Application starts on localhost port 8081
 
 ### Available Services
@@ -38,7 +39,7 @@ Application starts on localhost port 8081
 } 
 ```
 
-#### Transaction (field "id" is not required for post operation):
+### Transaction (field "id" is not required for post operation):
 ```sh
 {  
    "id":1,
