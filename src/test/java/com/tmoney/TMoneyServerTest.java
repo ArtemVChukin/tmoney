@@ -61,9 +61,9 @@ public class TMoneyServerTest {
     public void getAccount() {
         String name = "new name";
         String balance = "1.50";
-        String postAcountNumber = createAccount(name, balance);
+        String postAccountNumber = createAccount(name, balance);
         String getAccountNumber = given().contentType(ContentType.JSON).accept(ContentType.JSON)
-                .pathParams("number", postAcountNumber)
+                .pathParams("number", postAccountNumber)
                 .when().get(ACCOUNT)
                 .then()
                 .statusCode(HttpStatus.OK_200)
@@ -71,7 +71,7 @@ public class TMoneyServerTest {
                 .body(containsString(String.format(JSON_SHORT_ACCOUNT, name, balance)))
                 .body(containsString("\"number\":"))
                 .extract().body().jsonPath().getString("number");
-        assertEquals(postAcountNumber, getAccountNumber);
+        assertEquals(postAccountNumber, getAccountNumber);
     }
 
     @Test
@@ -111,34 +111,34 @@ public class TMoneyServerTest {
 
     @Test
     public void updateAccount() {
-        String postAcountNumber = createAccount("name", "45");
+        String postAccountNumber = createAccount("name", "45");
         String newName = "new name";
         String newBalance = "888";
         given().contentType(ContentType.JSON).accept(ContentType.JSON)
-                .body(String.format(JSON_FULL_ACCOUNT, postAcountNumber, newName, newBalance))
+                .body(String.format(JSON_FULL_ACCOUNT, postAccountNumber, newName, newBalance))
                 .when().put(ACCOUNTS)
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT_204);
         given().contentType(ContentType.JSON).accept(ContentType.JSON)
-                .pathParams("number", postAcountNumber)
+                .pathParams("number", postAccountNumber)
                 .when().get(ACCOUNT)
                 .then()
                 .statusCode(HttpStatus.OK_200)
                 .and().assertThat()
-                .body(containsString(String.format(JSON_FULL_ACCOUNT, postAcountNumber, newName, newBalance)));
+                .body(containsString(String.format(JSON_FULL_ACCOUNT, postAccountNumber, newName, newBalance)));
     }
 
     @Test
     public void deleteAccount() {
-        String postAcountNumber = createAccount("name", "45");
+        String postAccountNumber = createAccount("name", "45");
         given().contentType(ContentType.JSON).accept(ContentType.JSON)
-                .pathParams("number", postAcountNumber)
+                .pathParams("number", postAccountNumber)
                 .when().delete(ACCOUNT)
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT_204);
 
         given().contentType(ContentType.JSON).accept(ContentType.JSON)
-                .pathParams("number", postAcountNumber)
+                .pathParams("number", postAccountNumber)
                 .when().get(ACCOUNT)
                 .then()
                 .statusCode(HttpStatus.NOT_FOUND_404);

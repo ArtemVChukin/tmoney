@@ -50,11 +50,11 @@ public class AccountServiceTest {
     @Test
     public void getAll() {
         account.setNumber(null);
-        assertEquals(0, accountService.getByName(null).size());
+        assertEquals(0, accountService.getAll().size());
         accountService.add(makeCopy(account));
         accountService.add(makeCopy(account));
         accountService.add(makeCopy(account));
-        assertEquals(3, accountService.getByName(null).size());
+        assertEquals(3, accountService.getAll().size());
     }
 
     @Test
