@@ -1,6 +1,9 @@
+[![Build Status](https://travis-ci.com/ArtemVChukin/tmoney.svg?branch=master)](https://travis-ci.com/ArtemVChukin/tmoney)
+[![codecov](https://codecov.io/gh/ArtemVChukin/tmoney/branch/master/graph/badge.svg)](https://codecov.io/gh/ArtemVChukin/tmoney)
+
 # Transfer Money
 ## RESTful API for money transfers between accounts.
-[![Build Status](https://travis-ci.com/ArtemVChukin/tmoney.svg?branch=master)](https://travis-ci.com/ArtemVChukin/tmoney)
+
 
 Application starts on localhost port 8081
 
