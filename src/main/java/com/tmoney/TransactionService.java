@@ -51,7 +51,7 @@ class TransactionService {
     }
 
     Transaction get(Long id) {
-        return transactions.get(id);
+        return  Objects.requireNonNull(transactions.get(id), String.format("Transaction with id=%s does not exists", id));
     }
 
     Collection<Transaction> getAll() {

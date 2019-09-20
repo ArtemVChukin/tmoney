@@ -60,6 +60,12 @@ public class TMoneyServer {
             response.body(String.format("{\"message\":\"%s\"}", exception.getMessage()));
         });
 
+        exception(RuntimeException.class, (exception, request, response) -> {
+            response.status(INTERNAL_SERVER_ERROR_500);
+            response.body(String.format("{\"exception\":\"%s\",\"message\":\"%s\"}",
+                    exception.getClass().getSimpleName(), exception.getMessage()));
+        });
+
         post("/reset", ((request, response) -> {
             transactionService.reset();
             accountService.reset();

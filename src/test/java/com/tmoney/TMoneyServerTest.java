@@ -43,6 +43,27 @@ public class TMoneyServerTest {
         createAccount("blank name", "12.00");
     }
 
+    @Test
+    public void postSameAccount() {
+        String account = createAccount("blank name", "12.00");
+        String formatJSON = String.format(JSON_FULL_ACCOUNT, account, "name", "123");
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body(formatJSON)
+                .when().post(ACCOUNTS)
+                .then()
+                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY_422);
+    }
+
+    @Test
+    public void postInvalidAccount() {
+        String formatJSON = String.format(JSON_SHORT_ACCOUNT, "valid name", "invalid balance");
+        System.out.println(given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body("{" + formatJSON + "}")
+                .when().post(ACCOUNTS)
+                .then()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500).extract().body().asString());
+    }
+
     private String createAccount(String name, String balance) {
         String formatJSON = String.format(JSON_SHORT_ACCOUNT, name, balance);
         return given().contentType(ContentType.JSON).accept(ContentType.JSON)
@@ -55,7 +76,6 @@ public class TMoneyServerTest {
                 .body(containsString("\"number\":"))
                 .extract().body().jsonPath().getString("number");
     }
-
 
     @Test
     public void getAccount() {
@@ -72,6 +92,15 @@ public class TMoneyServerTest {
                 .body(containsString("\"number\":"))
                 .extract().body().jsonPath().getString("number");
         assertEquals(postAccountNumber, getAccountNumber);
+    }
+
+    @Test
+    public void getNullAccount() {
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .pathParams("number", "non exists number")
+                .when().get(ACCOUNT)
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
@@ -129,6 +158,24 @@ public class TMoneyServerTest {
     }
 
     @Test
+    public void updateNullAccount() {
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body(String.format(JSON_FULL_ACCOUNT, "not exists", "new name", "555"))
+                .when().put(ACCOUNTS)
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND_404);
+    }
+
+    @Test
+    public void updateInvalidAccount() {
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body(String.format(JSON_FULL_ACCOUNT, "not exists", "new name", "true"))
+                .when().put(ACCOUNTS)
+                .then()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
     public void deleteAccount() {
         String postAccountNumber = createAccount("name", "45");
         given().contentType(ContentType.JSON).accept(ContentType.JSON)
@@ -145,6 +192,15 @@ public class TMoneyServerTest {
     }
 
     @Test
+    public void deleteNullAccount() {
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .pathParams("number", "not real number")
+                .when().delete(ACCOUNT)
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND_404);
+    }
+
+    @Test
     public void postTransaction() {
         String debit = createAccount("debit account", "500.00");
         String credit = createAccount("credit account", "200");
@@ -152,7 +208,7 @@ public class TMoneyServerTest {
     }
 
     @Test
-    public void postNotTransaction() {
+    public void postNotEnoughMoneyTransaction() {
         String debit = createAccount("debit account", "200.00");
         String credit = createAccount("credit account", "100");
         String formatJSON = String.format(JSON_SHORT_TRANSACTION, debit, credit, "500");
@@ -163,6 +219,22 @@ public class TMoneyServerTest {
                 .statusCode(HttpStatus.UNPROCESSABLE_ENTITY_422);
     }
 
+    @Test
+    public void postNotExistingAccountTransaction() {
+        String realAccount = createAccount("debit account", "200.00");
+        String formatJSON = String.format(JSON_SHORT_TRANSACTION, realAccount, "not real account", "10");
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body("{" + formatJSON + "}")
+                .when().post(TRANSACTIONS)
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND_404);
+        formatJSON = String.format(JSON_SHORT_TRANSACTION, "not real account", realAccount, "10");
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body("{" + formatJSON + "}")
+                .when().post(TRANSACTIONS)
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND_404);
+    }
 
     @Test
     public void getTransaction() {
@@ -179,6 +251,24 @@ public class TMoneyServerTest {
                 .body(containsString(String.format(JSON_FULL_TRANSACTION, transactionId, debit, credit, amount)))
                 .extract().body().jsonPath().getLong("id");
         assertEquals(transactionId, getTransactionId);
+    }
+
+    @Test
+    public void getNullTransaction() {
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .pathParams("id", "123")
+                .when().get(TRANSACTION)
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND_404);
+    }
+
+    @Test
+    public void getExceptionTransaction() {
+        given().contentType(ContentType.JSON).accept(ContentType.JSON)
+                .pathParams("id", "not even a number")
+                .when().get(TRANSACTION)
+                .then()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500);
     }
 
     @Test
