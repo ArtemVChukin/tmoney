@@ -19,24 +19,14 @@ public class TransactionServiceTest {
     @Before
     public void setUp() {
         String debit = "debit";
-        Account debitAccount = new Account();
-        debitAccount.setNumber(debit);
-        debitAccount.setName("debit name");
-        debitAccount.setBalance(new BigDecimal(50));
-
         String credit = "credit";
-        Account creditAccount = new Account();
-        creditAccount.setNumber(credit);
-        creditAccount.setName("credit name");
-        creditAccount.setBalance(new BigDecimal(2));
-
         accountService = mock(AccountService.class);
-        when(accountService.get(debit)).thenReturn(debitAccount);
-        when(accountService.get(credit)).thenReturn(creditAccount);
+        createAccount(debit, "debit name", "50");
+        createAccount(credit, "credit name", "2");
+
         transactionService = new TransactionService(accountService);
 
         transaction = new Transaction();
-
         transaction.setDebit(debit);
         transaction.setCredit(credit);
         transaction.setAmount(new BigDecimal(3));
@@ -72,11 +62,7 @@ public class TransactionServiceTest {
     @Test
     public void getByAccount() {
         String first = "first account";
-        Account firstAccount = new Account();
-        firstAccount.setNumber(first);
-        firstAccount.setName("credit name");
-        firstAccount.setBalance(new BigDecimal(2));
-        when(accountService.get(first)).thenReturn(firstAccount);
+        createAccount(first, "credit name", "2");
 
         List<Transaction> result = new ArrayList<>();
 
@@ -89,7 +75,22 @@ public class TransactionServiceTest {
         transaction2.setDebit(first);
         result.add(transaction2);
         transactionService.add(transaction2);
+
+        Transaction transaction3 = makeCopy(transaction);
+        transactionService.add(transaction3);
+
         assertArrayEquals(result.toArray(), transactionService.getByAccount(first).toArray());
+
+        result.add(transaction3);
+        assertArrayEquals(result.toArray(), transactionService.getByAccount("").toArray());
+    }
+
+    private void createAccount(String number, String name, String balance) {
+        Account account = new Account();
+        account.setNumber(number);
+        account.setName(name);
+        account.setBalance(new BigDecimal(balance));
+        when(accountService.get(number)).thenReturn(account);
     }
 
     private Transaction makeCopy(Transaction transaction) {

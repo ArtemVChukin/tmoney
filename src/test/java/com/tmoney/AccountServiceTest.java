@@ -23,6 +23,13 @@ public class AccountServiceTest {
     @Test
     public void add() {
         assertSame(account, accountService.add(account));
+        assertNotNull(account.getNumber());
+    }
+
+    @Test
+    public void addWithNumber() {
+        account.setNumber("valid number");
+        assertTrue(isEquals(account, accountService.add(account)));
     }
 
     @Test
@@ -62,6 +69,14 @@ public class AccountServiceTest {
         account.setNumber("account with number");
         accountService.add(makeCopy(account));
         assertTrue(isEquals(account, accountService.getByName(account.getName()).iterator().next()));
+    }
+
+    @Test
+    public void getByBlankName() {
+        Account account1 = accountService.add(makeCopy(account));
+        Account account2 = accountService.add(makeCopy(account));
+        assertTrue(accountService.getByName(null).contains(account1));
+        assertTrue(accountService.getByName("").contains(account2));
     }
 
     private Account makeCopy(Account account) {
