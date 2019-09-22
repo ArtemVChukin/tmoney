@@ -34,7 +34,6 @@ Application starts on localhost port 8081
 ### Sample JSON for Account and Transaction
 
 ##### Account (field "number" is not required for post operation):
-
 ```sh
 {  
    "number":"408178100000000000000000",
