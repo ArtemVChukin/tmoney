@@ -43,7 +43,7 @@ Application starts on localhost port 8081
 } 
 ```
 
-#### Transaction (field "id" is not required for post operation):
+##### Transaction (field "id" is not required for post operation):
 ```sh
 {  
    "id":1,
