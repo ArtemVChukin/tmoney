@@ -32,6 +32,7 @@ Application starts on localhost port 8081
 - 500 Internal Server Error: The server encountered an unexpected condition 
 
 ### Sample JSON for Account and Transaction
+
 ##### Account (field "number" is not required for post operation):
 
 ```sh
@@ -42,7 +43,7 @@ Application starts on localhost port 8081
 } 
 ```
 
-### Transaction (field "id" is not required for post operation):
+#### Transaction (field "id" is not required for post operation):
 ```sh
 {  
    "id":1,
